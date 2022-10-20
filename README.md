@@ -1,4 +1,4 @@
-# explicit_hdl_modeling_processor
+# Explicit_hdl_modeling_processor
 This project displays designing a processor using explicit verilog expressions in the state machine.
 
 This processor is a 8 bit machine with 16 bit arithmetic opeartions.
