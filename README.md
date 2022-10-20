@@ -6,6 +6,7 @@ It has instructions for switchin data from 8 bit registers to the 16 bit registe
 
 It can do all 4 basic logic operations and all basic mathematical operations utilising a DSP block in an Artix7 FPGA for single cycle division.
 The overflow of addition and multiplication is stored in the B register when writin the result to A.
+The CPU is reseted trough an rst pin on the input, it is active high.
 The program is loaded trough a mem file whose name(name with path if not in the same folder as the verilog file) is pased in trough a parameter 
 when instatiating the processor module in a higher module.
 The instructions should be writen as two digit HEX value.
