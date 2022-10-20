@@ -57,3 +57,6 @@ INSTRUCTION SET:
     JCZ <address0> <address1> -> if(A == 0) memCNTR <= {<address0>, <address1>}                'h1d
     JCE8 <address0> <address1> -> if(A == B) memCNTR <= {<address0>, <address1>}               'h1e
     JCE16 <address0> <address1> -> if(C == D) memCNTR <= {<address0>, <address1>}              'h1f
+    
+    SW8 -> a <= b; b <= a; 'h20
+    SW16 -> c <= d; d <= c; 'h21 
