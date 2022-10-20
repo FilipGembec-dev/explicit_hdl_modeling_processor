@@ -14,7 +14,7 @@ It has a single 8 bit output port and single 8 bit input poer for inputing and o
 
 Future versions will include an UART for comunicating and reprograming the processor, universal GPIOs, and also instructions for single bit data manipulation.
 
-************************************************Instruction set*******************************************
+--------------------------------------------------Instruction set----------------------------------------------------
 {auxilery operations}
     NOP -> skips 5 clock cycles 'h00; 
     HLT -> sets halt flag to 1  'h01; 
@@ -68,4 +68,4 @@ Future versions will include an UART for comunicating and reprograming the proce
 {register switch}
 	SW8 -> a <= b; b <= a; 'h20; 
     	SW16 -> c <= d; d <= c; 'h21; 
-*****************************************************************************************************************
+-----------------------------------------------------------------------------------------------------------------------------
