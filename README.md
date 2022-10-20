@@ -8,5 +8,8 @@ It can do all 4 basic logic operations and all basic mathematical operations uti
 The overflow of addition and multiplication is stored in the B register when writin the result to A.
 The program is loaded trough a mem file whose name(name with path if not in the same folder as the verilog file) is pased in trough a parameter 
 when instatiating the processor module in a higher module.
+The instructions should be writen as two digit HEX value.
 
-Future versions will include an UART for comunicating and reprograming the processor, and also instructions for single bit data manipulation.
+It has a single 8 bit output port and single 8 bit input poer for inputing and outputing data.
+
+Future versions will include an UART for comunicating and reprograming the processor, universal GPIOs, and also instructions for single bit data manipulation.
