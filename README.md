@@ -15,11 +15,11 @@ It has a single 8 bit output port and single 8 bit input poer for inputing and o
 Future versions will include an UART for comunicating and reprograming the processor, universal GPIOs, and also instructions for single bit data manipulation.
 
 --------------------------------------------------Instruction set----------------------------------------------------
-{auxilery operations}
+(auxilery operations)
     NOP -> skips 5 clock cycles 'h00; 
     HLT -> sets halt flag to 1  'h01; 
     
-{Working register operations}
+(Working register operations)
     LDA <address0> <address1> -> A <= M[{address1, address0}];  'h02; 
     LDB <address0> <address1> -> B <= M[{address1, address0}];  'h03; 
     ABTC -> C <= {B, A};    'h04; 
@@ -27,10 +27,10 @@ Future versions will include an UART for comunicating and reprograming the proce
     CTAB -> {B, A} <= C;    'h06; 
     DTAB -> {B, A} <= D;    'h07; 
 
-{Storing data to memmory}
+(Storing data to memmory)
     STR <address0> <address1> -> M[{address1, address0}] <= A; 'h08; 
 
-{8bit arithemtic and logic operation}
+(8bit arithemtic and logic operation)
     8ADD -> {B, A} <= A + B;    'h09; 
     8SUB -> {B, A} <= A - B;    'h0a; 
     8MLT -> {B, A} <= A * B;    'h0b; 
@@ -41,7 +41,7 @@ Future versions will include an UART for comunicating and reprograming the proce
     8XOR -> A <= A ^ B;         'h0f; 
     8NOT -> A <= !A;            'h10; 
 
-{16 bit arithmetic and logic operations}
+(16 bit arithmetic and logic operations)
     16ADD -> {D, C} <= C + D;   'h11; *
     16SUB -> {D, C} <= C - D;   'h12; *
     16MLT -> {D, C} <= C * D;   'h13; *
@@ -52,20 +52,20 @@ Future versions will include an UART for comunicating and reprograming the proce
     16XOR -> C <= C ^ D;        'h17; *
     16NOT -> C <= !C;           'h18; *
     
-{input / output opearions}
+(input / output opearions)	
     in -> A <= in;              'h19;
     out -> OUT <= A;            'h1a; 
     
-{memmory navigation operations}
+(memmory navigation operations)
     JMP <address0> <address1> -> memCNTR <= {<address0>, <address1>};   'h1b;*
 
-{conditional memmory navigation operations}
+(conditional memmory navigation operations)		   
     JCC <address0> <address1> -> if((A + B) > (2**8 - 1)) memCNTR <= {<address0>, <address1>};  'h1c; 
     JCZ <address0> <address1> -> if(A == 0) memCNTR <= {<address0>, <address1>};                'h1d; 
     JCE8 <address0> <address1> -> if(A == B) memCNTR <= {<address0>, <address1>};               'h1e; 
     JCE16 <address0> <address1> -> if(C == D) memCNTR <= {<address0>, <address1>};              'h1f; 
 
-{register switch}
+(register switch)	
 	SW8 -> a <= b; b <= a; 'h20; 
     	SW16 -> c <= d; d <= c; 'h21; 
 -----------------------------------------------------------------------------------------------------------------------------
