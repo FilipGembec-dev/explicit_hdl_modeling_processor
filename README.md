@@ -17,12 +17,12 @@ Future versions will include an UART for comunicating and reprograming the proce
 INSTRUCTION SET:
 
 {auxilery operations}
-    NOP -> skips 5 clock cycles 'h00;   *
-    HLT -> sets halt flag to 1  'h01;   *
+    NOP -> skips 5 clock cycles 'h00;   
+    HLT -> sets halt flag to 1  'h01;   
     
 {Working register operations}
-    LDA <address0> <address1> -> A <= M[{address1, address0}];  'h02;   *
-    LDB <address0> <address1> -> B <= M[{address1, address0}];  'h03;   *
+    LDA <address0> <address1> -> A <= M[{address1, address0}];  'h02;   
+    LDB <address0> <address1> -> B <= M[{address1, address0}];  'h03;   
     ABTC -> C <= {B, A};    'h04;
     ABTD -> D <= {B, A};    'h05;
     CTAB -> {B, A} <= C;    'h06;
@@ -55,7 +55,7 @@ INSTRUCTION SET:
     
 {input / output opearions}
     in -> A <= in;              'h19;
-    out -> OUT <= A;            'h1a; *
+    out -> OUT <= A;            'h1a; 
     
 {memmory navigation operations}
     JMP <address0> <address1> -> memCNTR <= {<address0>, <address1>};   'h1b;
