@@ -1,6 +1,8 @@
 # Explicit_hdl_modeling_processor
 This project displays designing a processor using explicit verilog expressions in the state machine.
 
+The processor is designed to be used with the vivado deisgn suite, the assembly copiler compiles the code to vivado prendly memory file syntax.
+
 This processor is a 8 bit machine with 16 bit arithmetic opeartions.
 It has instructions for switchin data from 8 bit registers to the 16 bit registers and back.
 
@@ -13,51 +15,57 @@ The instructions should be writen as two digit HEX value.
 
 It has a single 8 bit output port and single 8 bit input poer for inputing and outputing data.
 
-Future versions will include an UART for comunicating and reprograming the processor, universal GPIOs, and also instructions for single bit data manipulation.
+Compiling the ASM.cpp will return an executable file that compiles a simple assembler for the processor. The compiler is run by passing the file name of the
+assembly code file as a comand line argument. -> ./ASM tode.txt
 
-INSTRUCTION SET:
 
-    NOP -> skips 5 clock cycles 'h00   
-    HLT -> sets halt flag to 1  'h01   
+
+Instruction set
+
+    NOP -> 'h00; 
+    HLT -> 'h01; 
     
-    LDA <address0> <address1> -> A <= M[{address1, address0}]  'h02   
-    LDB <address0> <address1> -> B <= M[{address1, address0}]  'h03  
-    ABTC -> C <= {B, A}    'h04
-    ABTD -> D <= {B, A}    'h05
-    CTAB -> {B, A} <= C    'h06
-    DTAB -> {B, A} <= D    'h07
+    LDA 'h02;
+    LDB 'h03; 
+    ABTC 'h04; 
+    ABTD 'h05; 
+    CTAB 'h06; 
+    DTAB 'h07; 
 
-    STR <address0> <address1> -> M[{address1, address0}] <= A 'h08
+    STR 'h08;  //3 byte operation
 
-    8ADD -> {B, A} <= A + B    'h09
-    8SUB -> {B, A} <= A - B    'h0a
-    8MLT -> {B, A} <= A * B    'h0b
-    8DIV -> {B, A} <= A / B    'h0c
+    8ADD  'h09; 
+    8SUB  'h0a; 
+    8MLT  'h0b; 
+    8DIV  'h0c; 
     -
-    8AND -> A <= A & B         'h0d 
-    8OR  -> A <= A | B         'h0e
-    8XOR -> A <= A ^ B         'h0f
-    8NOT -> A <= !A            'h10
+    8AND  'h0d; 
+    8OR   'h0e; 
+    8XOR  'h0f; 
+    8NOT  'h10; 
 
-    16ADD -> {D, C} <= C + D   'h11
-    16SUB -> {D, C} <= C - D   'h12
-    16MLT -> {D, C} <= C * D   'h13
-    16DIV -> {D, C} <= C / D   'h14
+    16ADD  'h11;
+    16SUB  'h12;
+    16MLT  'h13;
+    16DIV  'h14;
     -
-    16AND -> C <= C & D        'h15
-    16OR  -> C <= C | D        'h16
-    16XOR -> C <= C ^ D        'h17
-    16NOT -> C <= !C           'h18
+    16AND  'h15;
+    16OR   'h16;
+    16XOR  'h17;
+    16NOT  'h18;
     
-    in -> A <= in              'h19
-    out -> OUT <= A            'h1a
+    in     'h19;
+    out    'h1a; 
     
-    JMP <address0> <address1> -> memCNTR <= {<address0>, <address1>}   'h1b
+    JMP    'h1b; // 3 byte operation
 
-    JCC <address0> <address1> -> if((A + B) > (2**8 - 1)) memCNTR <= {<address0>, <address1>}  'h1c
-    JCZ <address0> <address1> -> if(A == 0) memCNTR <= {<address0>, <address1>}                'h1d
-    JCE8 <address0> <address1> -> if(A == B) memCNTR <= {<address0>, <address1>}               'h1e
-    JCE16 <address0> <address1> -> if(C == D) memCNTR <= {<address0>, <address1>}              'h1f
-    
-    SW8 -> a <= b; b <= a; 'h20
-    SW16 -> c <= d; d <= c; 'h21 
+    JCC      'h1c; //3 byte operation
+    JCZ      'h1d; //3 byte operation
+    JCE8     'h1e; //3 byte operation
+    JCE16    'h1f; //3 byte operation
+
+	SW8      'h20; 
+    SW16     'h21; 
+
+    INC      'h22;
+    RST      'h23;
