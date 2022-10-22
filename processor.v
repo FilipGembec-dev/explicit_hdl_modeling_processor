@@ -1,68 +1,26 @@
 `timescale 1ns / 1ps
 
-/********************Instruction set*********************
-{auxilery operations}
-    NOP -> skips 5 clock cycles 'h00;   *
-    HLT -> sets halt flag to 1  'h01;   *
+//instantiating the processor and other peripherals for only procesor upload
+module top(input CLK100MHZ, input [7:0] IN, output [7:0] OUT);
     
-{Working register operations}
-    LDA <address0> <address1> -> A <= M[{address1, address0}];  'h02;   *
-    LDB <address0> <address1> -> B <= M[{address1, address0}];  'h03;   *
-    ABTC -> C <= {B, A};    'h04;
-    ABTD -> D <= {B, A};    'h05;
-    CTAB -> {B, A} <= C;    'h06;
-    DTAB -> {B, A} <= D;    'h07;
-
-{Storing data to memmory}
-    STR <address0> <address1> -> M[{address1, address0}] <= A; 'h08;
-
-{8bit arithemtic and logic operation}
-    8ADD -> {B, A} <= A + B;    'h09;
-    8SUB -> {B, A} <= A - B;    'h0a;
-    8MLT -> {B, A} <= A * B;    'h0b;
-    8DIV -> {B, A} <= A / B;    'h0c;
-    -
-    8AND -> A <= A & B;         'h0d; 
-    8OR  -> A <= A | B;         'h0e;
-    8XOR -> A <= A ^ B;         'h0f;
-    8NOT -> A <= !A;            'h10;
-
-{16 bit arithmetic and logic operations}
-    16ADD -> {D, C} <= C + D;   'h11;
-    16SUB -> {D, C} <= C - D;   'h12;
-    16MLT -> {D, C} <= C * D;   'h13;
-    16DIV -> {D, C} <= C / D;   'h14;
-    -
-    16AND -> C <= C & D;        'h15;
-    16OR  -> C <= C | D;        'h16;
-    16XOR -> C <= C ^ D;        'h17;
-    16NOT -> C <= !C;           'h18;
+    //instantiating the processor
+    processor#("BOOT_ROM.mem") CPUT0 (CLK100MHZ, IN, OUT, rst);
     
-{input / output opearions}
-    in -> A <= in;              'h19;
-    out -> OUT <= A;            'h1a; *
+    assign rst = 0;
     
-{memmory navigation operations}
-    JMP <address0> <address1> -> memCNTR <= {<address0>, <address1>};   'h1b;
+endmodule
 
-{conditional memmory navigation operations}
-    JCC <address0> <address1> -> if((A + B) > (2**8 - 1)) memCNTR <= {<address0>, <address1>};  'h1c;
-    JCZ <address0> <address1> -> if(A == 0) memCNTR <= {<address0>, <address1>};                'h1d;
-    JCE8 <address0> <address1> -> if(A == B) memCNTR <= {<address0>, <address1>};               'h1e;
-    JCE16 <address0> <address1> -> if(C == D) memCNTR <= {<address0>, <address1>};              'h1f;
-    
-******************************************************************************************/
 
 module processor#(memmoryFile = "BOOT_ROM.mem")(
-    input clock, [7:0] IN, output reg [7:0] OUT, input rst
+    input CLK100MHZ, [7:0] IN, output reg [7:0] OUT, input rst
     );
     
     reg hltreg = 0; //halt register
     wire sys_clock; //system clock register
-    assign sys_clock = clock &! hltreg; //anding the input clock and the inverse of the halt register
+    assign sys_clock = CLK100MHZ &! hltreg; //anding the input clock and the inverse of the halt register
     
     //defining workign memmory
-    reg [7:0] M [((15**2)- 1):0]; //8 bit data buss with 16 bit address buss
+    reg [7:0] M [2**15:0]; //8 bit data buss with 16 bit address buss
 
     initial begin //pasting the values from a premade memmory file to the working memmory
         $readmemh(memmoryFile, M, 1, 2**16 - 1);
@@ -81,6 +39,8 @@ module processor#(memmoryFile = "BOOT_ROM.mem")(
     reg [15:0] memCNTR = 'h0000;
     //16 bit register for storing the memmory to jump to
     reg [15:0] memJMP = 'h0000;
+    //16 bit register for keeping the value of memCNTR
+    reg [15:0] addressKeep = 'h0000;
     
 
     
@@ -110,7 +70,8 @@ module processor#(memmoryFile = "BOOT_ROM.mem")(
                         'h01: memCNTR <= memCNTR + 1;
                         'h02: begin memJMP[7:0] <= M[memCNTR]; memCNTR <= memCNTR + 1; end
                         'h03: begin memJMP[15:8] <= M[memCNTR]; memCNTR <= memCNTR + 1; end
-                        'h04: begin A <= M[memJMP]; memJMP <= 'h0000; end
+                        'h04: begin addressKeep <= memCNTR; memCNTR <= memJMP; end
+                        'h05: begin A <= M[memCNTR]; memCNTR <= addressKeep; memJMP <= 'h0000; end
                     endcase
                 end
                 'h03: begin //LDB
@@ -118,7 +79,8 @@ module processor#(memmoryFile = "BOOT_ROM.mem")(
                         'h01: memCNTR <= memCNTR + 1;
                         'h02: begin memJMP[7:0] <= M[memCNTR]; memCNTR <= memCNTR + 1; end
                         'h03: begin memJMP[15:8] <= M[memCNTR]; memCNTR <= memCNTR + 1; end
-                        'h04: begin B <= M[memJMP]; memJMP <= 'h0000; end                    
+                        'h04: begin addressKeep <= memCNTR; memCNTR <= memJMP; end
+                        'h05: begin B <= M[memCNTR]; memCNTR <= addressKeep; memJMP <= 'h0000; end            
                     endcase
                 end
                 'h04: begin //ABTC
@@ -146,7 +108,8 @@ module processor#(memmoryFile = "BOOT_ROM.mem")(
                         'h01: memCNTR <= memCNTR + 1;
                         'h02: begin memJMP[7:0] <= M[memCNTR]; memCNTR <= memCNTR + 1; end
                         'h03: begin memJMP[15:8] <= M[memCNTR]; memCNTR <= memCNTR + 1; end
-                        'h04: begin M[memJMP] <= A; memJMP <= 'h0000; end
+                        'h04: begin addressKeep <= memCNTR; memCNTR <= memJMP; end
+                        'h05: begin M[memCNTR] <= A; memCNTR <= addressKeep; memJMP <= 'h0000; end
                     endcase
                 end      
                 /**************************************************************************/      
@@ -330,7 +293,36 @@ module processor#(memmoryFile = "BOOT_ROM.mem")(
                         'h01: begin memCNTR <= memCNTR + 1; C <= D; D <= C; end
                     endcase       
               end
-    
+              'h22: begin // incrementing register
+                    case(T)
+                        'h01: memCNTR <= memCNTR + 1;
+                        'h02: begin
+                            case(M[memCNTR])
+                                'h0a: A <= A + 1;
+                                'h0b: B <= B + 1;
+                                'h0c: C <= C + 1;
+                                'h0d: D <= D + 1;
+                                default: A <= A + 1;
+                            endcase
+                            memCNTR <= memCNTR + 1;
+                        end
+                    endcase
+              end
+              'h23: begin // reseting register
+                    case(T)
+                        'h01: memCNTR <= memCNTR + 1;
+                        'h02: begin
+                            case(M[memCNTR])
+                                'h0a: A <= 0;
+                                'h0b: B <= 0;
+                                'h0c: C <= 0;
+                                'h0d: D <= 0;
+                                default: A <= 0;
+                            endcase
+                            memCNTR <= memCNTR + 1;
+                        end
+                    endcase
+              end              
               default: //NOP
                     case(T)
                         'h01: memCNTR <= memCNTR + 1;
@@ -340,6 +332,7 @@ module processor#(memmoryFile = "BOOT_ROM.mem")(
         end
         
         if(rst) begin   //if reset line is high redset all values in processor to 0
+            OUT <= 'h0;
             hltreg <= 'h0;
             A <= 'h0;
             B <= 'h0;
@@ -348,10 +341,12 @@ module processor#(memmoryFile = "BOOT_ROM.mem")(
             inst <= 'h0;
             memCNTR <= 'h0;
             memJMP <= 'h0;
+            addressKeep <= 'h0;
         end
         
 
     end
     
+
     
 endmodule
